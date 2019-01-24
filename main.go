@@ -64,7 +64,16 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	log.Println(configString)
 	log.Println("============================")
 
-	output, err := applyYaml("edited-resource.yaml")
+	output, err := applyYaml("/tmp/edited-resource.yaml")
+	if output != nil {
+		log.Printf("%s", output)
+	}
+	if err != nil {
+		log.Println("UH OH!!")
+		return
+	}
+
+	output, err = applyYaml("/tmp/edited-pipeline-run-build.yaml")
 	if output != nil {
 		log.Printf("%s", output)
 	}
@@ -116,6 +125,12 @@ func modifyYaml(gitAttrs map[string]interface{}, templateToChange, templateOutpu
 	// Applies what's in the config string INTO the xml: effectively doing variable substitution.
 	editedyaml.Execute(&yml, gitAttrs)
 	data := yml.Bytes()
+
+	err = ioutil.WriteFile("/tmp/"+templateOutputFile, data, 0644)
+	if err != nil {
+		log.Println("Error writing file")
+	}
+
 	return string(data[:]), nil
 
 }

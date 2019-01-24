@@ -1,7 +1,7 @@
 apiVersion: pipeline.knative.dev/v1alpha1
 kind: PipelineRun
 metadata:
-  name: deploy-pipeline-run-{{.NAME}}-{{.ID}}
+  name: deploy-{{.ID}}
 spec:
   pipelineRef:
     name: deploy-pipeline
