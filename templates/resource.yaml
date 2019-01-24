@@ -1,0 +1,23 @@
+apiVersion: pipeline.knative.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: simple-git-source
+spec:
+  type: git
+  params:
+  - name: revision
+    value: {{.ID}}
+  - name: url
+    value: {{.URL}}
+
+---
+
+apiVersion: pipeline.knative.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: simple-image-resource
+spec:        
+  type: image
+  params:
+  - name: url
+    value: 9.140.104.238:5000/knative/{{.NAME}}:{{.ID}}

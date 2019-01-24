@@ -1,0 +1,16 @@
+apiVersion: pipeline.knative.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: deploy-pipeline-run-{{.NAME}}-{{.ID}}
+spec:
+  pipelineRef:
+    name: deploy-pipeline
+  trigger:
+    type: manual
+  serviceAccount: 'default'
+  resources:
+  - name: deploy-simple
+    inputs:
+    - name: workspace
+      resourceRef:
+        name: simple-git-source

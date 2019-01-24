@@ -1,0 +1,20 @@
+apiVersion: pipeline.knative.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: simple-pipeline-run-{{.NAME}}-{{.ID}}
+spec:
+  pipelineRef:
+    name: simple-pipeline
+  trigger:
+    type: manual
+  serviceAccount: 'default'
+  resources:
+  - name: build-simple
+    inputs:
+    - name: workspace
+      resourceRef:
+        name: simple-git-source
+    outputs:
+    - name: builtImage
+      resourceRef:
+        name: simple-image-resource
