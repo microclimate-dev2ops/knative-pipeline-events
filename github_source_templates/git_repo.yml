@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-secret
+type: Opaque
+stringData:
+  accessToken: YOUR_GITHUB_ACCESS_TOKEN
+  secretToken: SOME_RANDOM_STRING_HERE
+
+---
+
+apiVersion: sources.eventing.knative.dev/v1alpha1
+kind: GitHubSource
+metadata:
+  name: github-event-source
+spec:
+  eventTypes:
+    - push
+  ownerAndRepository: GITHUB_OWNER/GITHUB_REPO_NAME
+  accessToken:
+    secretKeyRef:
+      name: github-secret
+      key: accessToken
+  secretToken:
+    secretKeyRef:
+      name: github-secret
+      key: secretToken
+  sink:
+    apiVersion: serving.knative.dev/v1alpha1
+    kind: Service
+    name: github-event-pipeline
