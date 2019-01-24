@@ -29,3 +29,26 @@ spec:
     apiVersion: serving.knative.dev/v1alpha1
     kind: Service
     name: github-event-pipeline
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-repo-access-secret
+  annotations:
+    build.knative.dev/git-0: https://github.ibm.com # CHANGE IF GITHUB.COM
+type: kubernetes.io/basic-auth
+stringData:
+  username: does_not_matter
+  password: YOUR_GITHUB_ACCESS_TOKEN
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  #CHANGE THIS IF USING DIFFERENT SERVICE ACCOUNT?
+  name: default
+secrets:
+  - name: github-repo-access-secret

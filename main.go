@@ -22,7 +22,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	webhookData := gh.PushPayload{}
 	err := json.NewDecoder(r.Body).Decode(&webhookData)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println("OH CACK - WRONG EVENT TYPE???")
 		return
 	}
 
