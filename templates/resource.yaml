@@ -20,4 +20,5 @@ spec:
   type: image
   params:
   - name: url
-    value: host.docker.internal:5000/knative/{{.NAME}}:{{.ID}}
+    value: host.docker.internal:5000/knative/{{.NAME}}
+    #value: host.docker.internal:5000/knative/{{.NAME}}:{{.SHORTID}}

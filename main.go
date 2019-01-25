@@ -33,9 +33,10 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	log.Println("============================")
 
 	varmap := map[string]interface{}{
-		"URL":  webhookData.Repository.URL,
-		"ID":   webhookData.HeadCommit.ID,
-		"NAME": webhookData.Repository.Name,
+		"URL":     webhookData.Repository.URL,
+		"SHORTID": webhookData.HeadCommit.ID[0:7],
+		"ID":      webhookData.HeadCommit.ID,
+		"NAME":    webhookData.Repository.Name,
 	}
 
 	configString, err := modifyYaml(varmap, "templates/resource.yaml", "edited-resource.yaml")
@@ -47,19 +48,11 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	log.Println(configString)
 	log.Println("============================")
 
-	configString, err = modifyYaml(varmap, "templates/pipeline-run-deploy.yaml", "edited-pipeline-run-deploy.yaml")
+	configString, err = modifyYaml(varmap, "templates/pipeline-run.yaml", "edited-pipeline-run.yaml")
 	if err != nil {
 		log.Println("WA WA WAAAAAA 2")
 	}
 
-	log.Println("============================")
-	log.Println(configString)
-	log.Println("============================")
-
-	configString, err = modifyYaml(varmap, "templates/pipeline-run-build.yaml", "edited-pipeline-run-build.yaml")
-	if err != nil {
-		log.Println("WA WA WAAAAAA 3")
-	}
 	log.Println("============================")
 	log.Println(configString)
 	log.Println("============================")
@@ -73,7 +66,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	output, err = applyYaml("/tmp/edited-pipeline-run-build.yaml")
+	output, err = applyYaml("/tmp/edited-pipeline-run.yaml")
 	if output != nil {
 		log.Printf("%s", output)
 	}

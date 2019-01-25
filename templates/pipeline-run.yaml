@@ -1,0 +1,17 @@
+apiVersion: pipeline.knative.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: pipeline-{{.SHORTID}}
+spec:
+  pipelineRef:
+    name: simple-pipeline
+  trigger:
+    type: manual
+  serviceAccount: 'default'
+  resources:
+  - name: source-repo
+    resourceRef:
+      name: simple-git-source
+  - name: image-name
+    resourceRef:
+      name: simple-image-resource
