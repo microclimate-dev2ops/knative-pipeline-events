@@ -52,7 +52,7 @@ Cd eventing-sources
 ko apply -f config/default.yaml
 
 
-Fork github.ibm.com/APPLEBYD/simple app in GHE to your own org
+Fork github.ibm.com/swiss-cloud/sample app in GHE to your own org. Keep the name 'sample'. 
 
 
 Install sound-of-devops:

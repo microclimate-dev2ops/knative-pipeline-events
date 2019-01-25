@@ -8,10 +8,17 @@ spec:
     - name: git-source
       type: git
   steps:
-  - name: run-kubectl
+  - name: delete-previous
     image: lachlanevenson/k8s-kubectl
     command: ['kubectl']
     args: 
-    - 'apply'
+    - 'delete'
+    - '-f'
+    - '/workspace/git-source/config'
+  - name: install-new
+    image: lachlanevenson/k8s-kubectl
+    command: ['kubectl']
+    args: 
+    - 'create'
     - '-f'
     - '/workspace/git-source/config'
