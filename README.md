@@ -3,12 +3,12 @@
 Instructions For Using:
 
 Docker for Mac
--  edge
--  Insecure registry host.docker.internal:5000
--  Kube enable
--  Cpu 6
--  Mem 10
--  Swap 2.5
+  edge
+  Insecure registry host.docker.internal:5000
+  Kube enable
+  Cpu 6
+  Mem 10
+  Swap 2.5
 
 docker run -d -p 5000:5000 --name registry-srv -e REGISTRY_STORAGE_DELETE_ENABLED=true registry:2
 docker run -it -p 8080:8080 --name registry-web --link registry-srv -e REGISTRY_URL=http://registry-srv:5000/v2 -e REGISTRY_NAME=localhost:5000 hyper/docker-registry-web 
