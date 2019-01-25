@@ -38,13 +38,18 @@ kubectl get pods --namespace knative-eventing
 kubectl get pods --namespace knative-sources
 kubectl get pods --namespace knative-monitoring
 
+IMPORTANT:
 
+Custom domain setup:
+kubectl edit cm config-domain --namespace knative-serving
+use yourip.nip.io in place of example.com
 
 Install build-pipeline:  https://github.com/knative/build-pipeline/blob/master/DEVELOPMENT.md
 
   Clone build-pipeline ... go path etc
-  Export KO_DOCKER_REPO=localhost:5000
+  Export KO_DOCKER_REPO=localhost:5000/knative
   Ko apply -f ./config
+
 
 
 Clone github.com/dibbles/eventing-sources - into gopath ... src/github.com/knative
@@ -57,12 +62,15 @@ Fork github.ibm.com/swiss-cloud/sample app in GHE to your own org. Keep the name
 
 Install sound-of-devops:
 
-  Clone
+  Clone to GOPATH/github.ibm.com/swiss-cloud
+  cd sound-of-devops
   Kubectl apply -f ./config
   docker build -t docker.io/dibbles/github-event-handler .    (PROBABLY DONT NEED TO TAG TO DOCKER.IO)
   Docker push above
-  Modify event_handler yaml image
+  Modify event_handler yaml (edit image location)
   Kubectl apply -f (the above)
-  Modify GitHub source template
+  Modify the GitHub source template (the stuff in CAPS)
   Kubectl apply -f the above
+
+  kubectl get pods - 
 
