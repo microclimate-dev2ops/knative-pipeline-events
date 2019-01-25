@@ -47,12 +47,12 @@ Install build-pipeline:  https://github.com/knative/build-pipeline/blob/master/D
   Ko apply -f ./config
 
 
-Clone dibbles/eventing-sources under go path etc....
+Clone github.com/dibbles/eventing-sources - into gopath ... src/github.com/knative
 Cd eventing-sources
 ko apply -f config/default.yaml
 
 
-Fork APPLEBYD/simple app in GHE to your own org
+Fork github.ibm.com/APPLEBYD/simple app in GHE to your own org
 
 
 Install sound-of-devops:
