@@ -70,6 +70,8 @@ IMPORTANT:
   
 `Export KO_DOCKER_REPO=localhost:5000/knative`
 
+`cd build-pipeline`
+
 3. Install the Knative build-pipeline components
 
 `Ko apply -f ./config`
@@ -122,7 +124,7 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
 ## Verify
 
-1. Check that a webhook was successfully created for your `simple` repository
+1. Check that a webhook was successfully created for your `sample` repository
 
 2. Commit a code change to your repository
 
