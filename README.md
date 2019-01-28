@@ -58,16 +58,15 @@ IMPORTANT:
 `kubectl edit cm config-domain --namespace knative-serving`
 
   - Use YOUR_IP.nip.io in place of example.com
+  - Run `ifconfig | grep "inet 9."` to get your ip address when using Docker for Mac
 
 ## Install Knative build-pipeline
 
 1. Ensure you have the listed required tools installed https://github.com/knative/build-pipeline/blob/master/DEVELOPMENT.md#requirements
 
-https://github.com/knative/build-pipeline/blob/master/DEVELOPMENT.md
-
 2. Clone the repository and export docker repo for ko 
 
-`git clone https://github.com/knative/build-pipeline.git` to GOPATH/github.ibm.com/swiss-cloud
+`git clone https://github.com/knative/build-pipeline.git` to GOPATH/github.com/knative
   
 `Export KO_DOCKER_REPO=localhost:5000/knative`
 
@@ -75,11 +74,13 @@ https://github.com/knative/build-pipeline/blob/master/DEVELOPMENT.md
 
 `Ko apply -f ./config`
 
+4. Check pods in `knative-build-pipeline` for status of install
+
 ## Eventing-sources patch 
 
 1. Clone the repository
 
-`git clone github.com/dibbles/eventing-sources` into gopath GOPATH/github.com/knative
+`git clone https://github.com/dibbles/eventing-sources.git` into gopath GOPATH/github.com/knative
 
 `cd eventing-sources`
 
@@ -103,7 +104,7 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
 `Kubectl apply -f ./config`
 
-3. Build the event handler image, pushing to your own dockerhub repository
+3. Build the event handler image and push it to your own Dockerhub repository
 
 `docker build -t docker.io/YOUR_DOCKERHUB_ID/github-event-handler .`  
 
@@ -111,7 +112,7 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
 ## Modify yaml files for your own configuration 
 
-- Edit the image location in `github-event-handler.yml` replacing your dockerhub ID 
+- Edit the image location in `github-event-handler.yml` replacing your Dockerhub ID 
 
 `Kubectl apply -f event_handler/github-event-handler.yml`
 
@@ -119,5 +120,19 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
 `Kubectl apply -f github_source_templates/git_repo.yml`
 
+## Verify
 
-`watch kubectl get pods` 
+1. Check that a webhook was successfully created for your `simple` repository
+
+2. Commit a code change to your repository
+
+3. Monitor with `watch kubectl get pods` 
+
+  - You should have pods for the below elements
+    - Github event handler
+    - Github event source
+
+    - Pipeline build 
+    - Pipeline deploy
+    - Your running application
+ 
