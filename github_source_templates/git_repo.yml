@@ -35,7 +35,7 @@ stringData:
 apiVersion: sources.eventing.knative.dev/v1alpha1
 kind: GitHubSource
 metadata:
-  name: github-event-source
+  name: github-event-source-GITHUB_REPO_NAME
 spec:
   eventTypes:
     - push

@@ -131,10 +131,9 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 3. Monitor with `watch kubectl get pods` 
 
   - You should have pods for the below elements
-    - Github event handler
-    - Github event source
+    1. A Github event handler
+    2. A Github event source
 
-    - Pipeline build 
-    - Pipeline deploy
-    - Your running application
+    3. Pipeline build will run through its init containers followed by pipeline deploy
+    4. Once the pipelines have run through successfully, your running application
  
