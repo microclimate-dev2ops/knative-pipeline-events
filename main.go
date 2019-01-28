@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"time"
 
 	gh "gopkg.in/go-playground/webhooks.v3/github"
 )
@@ -41,10 +42,13 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	dateTime := time.Now().Unix()
+
 	log.Println("============================")
 	log.Println(requestData.REPOURL)
 	log.Println(requestData.COMMITID)
 	log.Println(requestData.REPONAME)
+	log.Println(dateTime)
 	log.Println("============================")
 
 	argmap := map[string]interface{}{
@@ -52,6 +56,7 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 		"SHORTID": requestData.COMMITID[0:7],
 		"ID":      requestData.COMMITID,
 		"NAME":    requestData.REPONAME,
+		"MARKER":  dateTime,
 	}
 
 	submitBuild(argmap)
@@ -66,6 +71,8 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	dateTime := time.Now().Unix()
+
 	log.Println("============================")
 	log.Println(webhookData.HeadCommit.ID)
 	log.Println(webhookData.Repository.URL)
@@ -77,6 +84,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		"SHORTID": webhookData.HeadCommit.ID[0:7],
 		"ID":      webhookData.HeadCommit.ID,
 		"NAME":    webhookData.Repository.Name,
+		"MARKER":  dateTime,
 	}
 
 	submitBuild(argmap)
