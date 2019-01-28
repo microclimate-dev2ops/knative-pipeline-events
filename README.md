@@ -7,7 +7,7 @@
 - Under Daemon add insecure registry - host.docker.internal:5000
 - Enable Kubernetes
 
-### Set up a local docker registry 
+Set up a local docker registry 
 
 ```
 docker run -d -p 5000:5000 --name registry-srv -e REGISTRY_STORAGE_DELETE_ENABLED=true registry:2
@@ -19,7 +19,7 @@ docker run -it -p 8080:8080 --name registry-web --link registry-srv -e REGISTRY_
 
 https://github.com/knative/docs/blob/master/install/Knative-with-any-k8s.md
 
-### Install Istio
+Install Istio
 
 ```
 kubectl apply --filename https://github.com/knative/serving/releases/download/v0.3.0/istio-crds.yaml && \
@@ -33,7 +33,7 @@ download/v0.3.0/istio.yaml
 If you see an error when creating resources about an unknown type, run the `kubectl apply` command again
 
 
-### Install Knative and its dependencies with the below `kubectl apply`
+Install Knative and its dependencies with the below `kubectl apply`
 
 ```
 kubectl apply --filename https://github.com/knative/serving/releases/download/v0.3.0/serving.yaml \
@@ -67,7 +67,7 @@ https://github.com/knative/build-pipeline/blob/master/DEVELOPMENT.md
   
 `Export KO_DOCKER_REPO=localhost:5000/knative`
 
-### Install the Knative components 
+Install the Knative components 
 
 `Ko apply -f ./config`
 
@@ -89,11 +89,11 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
 `cd sound-of-devops`
 
-### Install the components
+Install the components
 
 `Kubectl apply -f ./config`
 
-### Build the event handler image, pushing to your own dockerhub repository
+Build the event handler image, pushing to your own dockerhub repository
 
 `docker build -t docker.io/YOUR_DOCKERHUB_ID/github-event-handler .`  
 
@@ -101,11 +101,11 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
 ## Modify yaml files for your own configuration 
 
-### Edit the image location in `github-event-handler.yml` replacing your dockerhub ID 
+Edit the image location in `github-event-handler.yml` replacing your dockerhub ID 
 
 `Kubectl apply -f event_handler/github-event-handler.yml`
 
-### Modify the GitHub Source template `github_source_templates/git_repo.yml` with your own values (All parts in CAPS)
+Modify the GitHub Source template `github_source_templates/git_repo.yml` with your own values (All parts in CAPS)
 
 `Kubectl apply -f github_source_templates/git_repo.yml`
 
