@@ -47,49 +47,14 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 	log.Println(requestData.REPONAME)
 	log.Println("============================")
 
-	varmap := map[string]interface{}{
+	argmap := map[string]interface{}{
 		"URL":     requestData.REPOURL,
 		"SHORTID": requestData.COMMITID[0:7],
 		"ID":      requestData.COMMITID,
 		"NAME":    requestData.REPONAME,
 	}
 
-	configString, err := modifyYaml(varmap, "templates/resource.yaml", "edited-resource.yaml")
-	if err != nil {
-		log.Println("WA WA WAAAAAA")
-	}
-
-	log.Println("============================")
-	log.Println(configString)
-	log.Println("============================")
-
-	configString, err = modifyYaml(varmap, "templates/pipeline-run.yaml", "edited-pipeline-run.yaml")
-	if err != nil {
-		log.Println("WA WA WAAAAAA 2")
-	}
-
-	log.Println("============================")
-	log.Println(configString)
-	log.Println("============================")
-
-	output, err := applyYaml("/tmp/edited-resource.yaml")
-	if output != nil {
-		log.Printf("%s", output)
-	}
-	if err != nil {
-		log.Println("UH OH!!")
-		return
-	}
-
-	output, err = applyYaml("/tmp/edited-pipeline-run.yaml")
-	if output != nil {
-		log.Printf("%s", output)
-	}
-	if err != nil {
-		log.Println("UH OH!!")
-		return
-	}
-
+	submitBuild(argmap)
 }
 
 func handleWebhook(w http.ResponseWriter, r *http.Request) {
@@ -107,12 +72,50 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	log.Println(webhookData.Repository.Name)
 	log.Println("============================")
 
-	varmap := map[string]interface{}{
+	argmap := map[string]interface{}{
 		"URL":     webhookData.Repository.URL,
 		"SHORTID": webhookData.HeadCommit.ID[0:7],
 		"ID":      webhookData.HeadCommit.ID,
 		"NAME":    webhookData.Repository.Name,
 	}
+
+	submitBuild(argmap)
+
+}
+
+func modifyYaml(gitAttrs map[string]interface{}, templateToChange, templateOutputFile string) (string, error) {
+	templateFile, err := filepath.Abs(templateToChange)
+	if err != nil {
+		log.Printf("Error 1 : %s", err)
+	}
+
+	resourceyaml, err := ioutil.ReadFile(templateFile)
+	if err != nil {
+		log.Printf("Error 2 : %s", err)
+	}
+
+	// Can be any name really
+	editedyaml := template.New(templateOutputFile)
+	editedyaml, err = editedyaml.Parse(string(resourceyaml))
+	if err != nil {
+		log.Printf("Error 3 : %s", err)
+	}
+
+	var yml bytes.Buffer
+	// Applies what's in the config string INTO the xml: effectively doing variable substitution.
+	editedyaml.Execute(&yml, gitAttrs)
+	data := yml.Bytes()
+
+	err = ioutil.WriteFile("/tmp/"+templateOutputFile, data, 0644)
+	if err != nil {
+		log.Println("Error writing file")
+	}
+
+	return string(data[:]), nil
+
+}
+
+func submitBuild(varmap map[string]interface{}) {
 
 	configString, err := modifyYaml(varmap, "templates/resource.yaml", "edited-resource.yaml")
 	if err != nil {
@@ -169,38 +172,6 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		}
 
 		pipeClient. */
-
-}
-
-func modifyYaml(gitAttrs map[string]interface{}, templateToChange, templateOutputFile string) (string, error) {
-	templateFile, err := filepath.Abs(templateToChange)
-	if err != nil {
-		log.Printf("Error 1 : %s", err)
-	}
-
-	resourceyaml, err := ioutil.ReadFile(templateFile)
-	if err != nil {
-		log.Printf("Error 2 : %s", err)
-	}
-
-	// Can be any name really
-	editedyaml := template.New(templateOutputFile)
-	editedyaml, err = editedyaml.Parse(string(resourceyaml))
-	if err != nil {
-		log.Printf("Error 3 : %s", err)
-	}
-
-	var yml bytes.Buffer
-	// Applies what's in the config string INTO the xml: effectively doing variable substitution.
-	editedyaml.Execute(&yml, gitAttrs)
-	data := yml.Bytes()
-
-	err = ioutil.WriteFile("/tmp/"+templateOutputFile, data, 0644)
-	if err != nil {
-		log.Println("Error writing file")
-	}
-
-	return string(data[:]), nil
 
 }
 
