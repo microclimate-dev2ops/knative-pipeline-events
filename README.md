@@ -4,8 +4,8 @@
 
 - Docker for Mac - switch to edge version
     - Under advanced set CPU 6, Memory 10, Swap 2.5
-- Under Daemon add insecure registry - host.docker.internal:5000
-- Enable Kubernetes
+    - Under Daemon add insecure registry - host.docker.internal:5000
+    - Enable Kubernetes
 
 - Set up a local docker registry 
 
@@ -61,15 +61,17 @@ IMPORTANT:
 
 ## Install Knative build-pipeline
 
+1. Ensure you have the listed required tools installed https://github.com/knative/build-pipeline/blob/master/DEVELOPMENT.md#requirements
+
 https://github.com/knative/build-pipeline/blob/master/DEVELOPMENT.md
 
-1. Clone the repository and export docker repo for ko 
+2. Clone the repository and export docker repo for ko 
 
 `git clone https://github.com/knative/build-pipeline.git` to GOPATH/github.ibm.com/swiss-cloud
   
 `Export KO_DOCKER_REPO=localhost:5000/knative`
 
-2. Install the Knative build-pipeline components
+3. Install the Knative build-pipeline components
 
 `Ko apply -f ./config`
 
