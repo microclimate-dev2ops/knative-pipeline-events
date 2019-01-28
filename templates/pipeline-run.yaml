@@ -1,7 +1,8 @@
+
 apiVersion: pipeline.knative.dev/v1alpha1
 kind: PipelineRun
 metadata:
-  name: pipeline-{{.SHORTID}}
+  name: pipeline-{{.SHORTID}}-{{.MARKER}}
 spec:
   pipelineRef:
     name: simple-pipeline
@@ -15,3 +16,6 @@ spec:
   - name: image-name
     resourceRef:
       name: simple-image-resource
+  
+
+    
