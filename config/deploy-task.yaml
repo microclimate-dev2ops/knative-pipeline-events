@@ -7,18 +7,26 @@ spec:
     resources: 
     - name: git-source
       type: git
+    - name: image-out
+      type: image
   steps:
-  - name: delete-previous
-    image: lachlanevenson/k8s-kubectl
-    command: ['kubectl']
+  - name: modify-yaml
+    image: alpine
+    command: ['sed']
     args: 
-    - 'delete'
-    - '-f'
-    - '/workspace/git-source/config'
+    - '-i.bak'
+    - 's!image:.*!image: ${inputs.resources.image-out.url}!g'
+    - '/workspace/git-source/config/deployment.yaml'
+  - name: check
+    image: alpine
+    command: ['cat']
+    args: 
+    - '/workspace/git-source/config/deployment.yaml'
   - name: install-new
     image: lachlanevenson/k8s-kubectl
     command: ['kubectl']
     args: 
-    - 'create'
+    - 'apply'
     - '-f'
     - '/workspace/git-source/config'
+    
