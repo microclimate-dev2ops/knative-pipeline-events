@@ -60,21 +60,21 @@ IMPORTANT:
   - Use YOUR_IP.nip.io in place of example.com
   - Run `ifconfig | grep "inet 9."` to get your ip address when using Docker for Mac
 
-## Install Knative build-pipeline
+## Install Knative build-pipeline with patch
 
 1. Ensure you have the listed required tools installed https://github.com/knative/build-pipeline/blob/master/DEVELOPMENT.md#requirements
 
 2. Clone the repository and export docker repo for ko 
 
-`git clone https://github.com/knative/build-pipeline.git` to GOPATH/github.com/knative
+`git clone https://github.com/dibbles/build-pipeline.git` to GOPATH/github.com/knative
   
-`Export KO_DOCKER_REPO=localhost:5000/knative`
+`export KO_DOCKER_REPO=localhost:5000/knative`
 
 `cd build-pipeline`
 
 3. Install the Knative build-pipeline components
 
-`Ko apply -f ./config`
+`ko apply -f ./config`
 
 4. Check pods in `knative-build-pipeline` for status of install
 
@@ -104,7 +104,7 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
 2. Install the components
 
-`Kubectl apply -f ./config`
+`kubectl apply -f ./config`
 
 3. Build the event handler image and push it to your own Dockerhub repository
 
@@ -116,11 +116,11 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
 - Edit the image location in `github-event-handler.yml` replacing your Dockerhub ID 
 
-`Kubectl apply -f event_handler/github-event-handler.yml`
+`kubectl apply -f event_handler/github-event-handler.yml`
 
 - Modify the GitHub Source template `github_source_templates/git_repo.yml` with your own values (All parts in CAPS)
 
-`Kubectl apply -f github_source_templates/git_repo.yml`
+`kubectl apply -f github_source_templates/git_repo.yml`
 
 ## Verify
 
