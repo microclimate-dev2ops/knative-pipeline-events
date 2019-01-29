@@ -26,3 +26,6 @@ spec:
       inputs:
       - name: git-source
         resource: source-repo
+      - name: image-out
+        resource: image-name
+
