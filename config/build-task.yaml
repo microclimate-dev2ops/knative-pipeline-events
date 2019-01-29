@@ -19,12 +19,34 @@ spec:
       - name: builtImage
         type: image
   steps:
-  - name: build-and-push
-    image: gcr.io/kaniko-project/executor
+  - name: build
+    image: docker
     command:
-    - /kaniko/executor
+    - docker 
     args:
-    - --dockerfile=${inputs.params.pathToDockerFile}
-    - --destination=${outputs.resources.builtImage.url}
-    - --context=${inputs.params.pathToContext}
-    - --insecure
+    - 'build'
+    - '-f'
+    - ${inputs.params.pathToDockerFile}
+    - '-t'
+    - ${outputs.resources.builtImage.url}
+    - ${inputs.params.pathToContext}
+    volumeMounts:
+    - name: docker-socket
+      mountPath: /var/run/docker.sock
+  - name: push 
+    image: docker
+    command:
+    - docker 
+    args:
+    - 'push'
+    - ${outputs.resources.builtImage.url}
+    volumeMounts:
+    - name: docker-socket
+      mountPath: /var/run/docker.sock
+  volumes:
+    - name: docker-socket
+      hostPath:
+        path: /var/run/docker.sock
+        type: Socket
+
+
