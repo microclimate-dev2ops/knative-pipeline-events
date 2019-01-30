@@ -23,8 +23,7 @@ https://github.com/knative/docs/blob/master/install/Knative-with-any-k8s.md
 
 ```
 kubectl apply --filename https://github.com/knative/serving/releases/download/v0.3.0/istio-crds.yaml && \
-kubectl apply --filename https://github.com/knative/serving/releases/
-download/v0.3.0/istio.yaml
+kubectl apply --filename https://github.com/knative/serving/releases/download/v0.3.0/istio.yaml
 ```
 `kubectl label namespace default istio-injection=enabled`
 
