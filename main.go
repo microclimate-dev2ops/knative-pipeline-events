@@ -28,6 +28,7 @@ type BuildRequest struct {
 	REPOURL  string `json:"repourl"`
 	COMMITID string `json:"commitid"`
 	REPONAME string `json:"reponame"`
+	BRANCH   string `json:"branch"`
 }
 
 func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
@@ -48,13 +49,24 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 	log.Println(requestData.REPOURL)
 	log.Println(requestData.COMMITID)
 	log.Println(requestData.REPONAME)
+	log.Println(requestData.BRANCH)
 	log.Println(dateTime)
 	log.Println("============================")
 
+	id := ""
+	shortid := ""
+	if requestData.COMMITID != "" {
+		id = requestData.COMMITID
+		shortid = requestData.COMMITID[0:7]
+	} else {
+		id = requestData.BRANCH
+		shortid = "latest"
+	}
+
 	argmap := map[string]interface{}{
 		"URL":     requestData.REPOURL,
-		"SHORTID": requestData.COMMITID[0:7],
-		"ID":      requestData.COMMITID,
+		"SHORTID": shortid,
+		"ID":      id,
 		"NAME":    requestData.REPONAME,
 		"MARKER":  dateTime,
 	}
