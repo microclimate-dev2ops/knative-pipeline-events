@@ -160,19 +160,34 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
  {
    "repourl": YOUR_REPOSITORY_URL,
    "commitid": LONG_COMMIT_ID,
-   "reponame": YOUR_REPO_NAME     
+   "reponame": YOUR_REPO_NAME,
+   "branch": YOUR_BRANCH_NAME     
 }
 ```
 
-as an example
+as an example, to build at a specific commit
 
 ```
  {
    "repourl": "https://github.ibm.com/APPLEBYD/node-sample",
    "commitid": "518974ca68df99b336be4dafb7edaa3d5e1adeb0",
-   "reponame": "node-sample"     
+   "reponame": "node-sample"
+   "branch": ""     
 }
 ```
+
+as an example, to build the branch called test
+
+```
+ {
+   "repourl": "https://github.ibm.com/APPLEBYD/node-sample",
+   "commitid": "",
+   "reponame": "node-sample"
+   "branch": "test"     
+}
+```
+
+- If you specify a value for both a commitid and branch, the commitid will be used
 
  ## Current restrictions
 
