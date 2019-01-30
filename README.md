@@ -4,10 +4,11 @@
 
 - Docker for Mac - switch to edge version
     - Under advanced set CPU 6, Memory 10, Swap 2.5
-    - Under Daemon add insecure registry - host.docker.internal:5000
+    - Under Daemon add insecure registry - `host.docker.internal:5000`
     - Enable Kubernetes
+    - A properly set up `GOPATH` (it is advised to use `$HOME/go`). The directory structure is important so that `ko` commands function as expected. Images should be built and made available at your `localhost:5000` Docker registry when `ko` is used. See [Gopath docs](https://github.com/golang/go/wiki/GOPATH) for details.
 
-- Set up a local docker registry 
+- Set up a local docker registry  and optionally a registry viewer
 
   ```
   docker run -d -p 5000:5000 --name registry-srv -e REGISTRY_STORAGE_DELETE_ENABLED=true registry:2
@@ -63,9 +64,9 @@ IMPORTANT:
 
 1. Ensure you have the listed required tools installed https://github.com/knative/build-pipeline/blob/master/DEVELOPMENT.md#requirements
 
-2. Clone the repository and export docker repo for ko 
+2. Clone the repository and export docker repo for `ko`
 
-`git clone https://github.com/dibbles/build-pipeline.git` to GOPATH/github.com/knative
+`git clone https://github.com/dibbles/build-pipeline.git` into `$GOPATH/src/github.com/knative`
   
 `export KO_DOCKER_REPO=localhost:5000/knative`
 
@@ -81,7 +82,7 @@ IMPORTANT:
 
 1. Clone the repository
 
-`git clone https://github.com/dibbles/eventing-sources.git` into gopath GOPATH/github.com/knative
+`git clone https://github.com/dibbles/eventing-sources.git` into `$GOPATH/src/github.com/knative`
 
 `cd eventing-sources`
 
@@ -97,7 +98,7 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
 1. Clone the repository 
 
-`git clone https://github.ibm.com/swiss-cloud/sound-of-devops.git` to GOPATH/github.ibm.com/swiss-cloud
+`git clone https://github.ibm.com/swiss-cloud/sound-of-devops.git` into `$GOPATH/src/github.ibm.com/swiss-cloud`
 
 `cd sound-of-devops`
 
@@ -145,7 +146,7 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
  - Delivering a code change to your repository will cause the webhook to poke the ksvc which starts a pod which in turn pokes the ksvc for the event handler (created when you performed the `kubectl apply -f event_handler/github-event-handler.yml`)
 
- - The pod for the event handler spins up and creates a knative pipelinerun and knative resource(s), these trigger the pipeline code and the the first pipeline pod spins up that is responsible for building your container and pushing to host.docker.internal:5000/knative/{{.NAME}}:{{.SHORTID}}, where NAME is you repo name and the SHORTID is the short commit id
+ - The pod for the event handler spins up and creates a knative pipelinerun and knative resource(s), these trigger the pipeline code and the the first pipeline pod spins up that is responsible for building your container and pushing to `host.docker.internal:5000/knative/{{.NAME}}:{{.SHORTID}}`, where NAME is you repo name and the SHORTID is the short commit id
 
  - Once completed, a second pod spins up which handles deploying your application as per your yaml in your apps config directory.
 
@@ -190,6 +191,6 @@ as an example, to build the branch called test
 
  ## Current restrictions
 
- - You must have a file called deployment.yaml which contains your app deployment as the code is currently hard coded to replace the image listed in this file with that output in the build.
+ - You must have a file called `deployment.yaml` which contains your app deployment as the code is currently hard coded to replace the image listed in this file with that output in the build.
 
- - Only run a single build at a time (artifacts are not fully uniquely named and problems could occur)
+ - Only run a single build at a time (artifacts are not fully uniquely named and problems could occur).
