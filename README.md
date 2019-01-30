@@ -158,9 +158,9 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
  ```
  {
-	"repourl": YOUR_REPOSITORY_URL,
-	"commitid": LONG_COMMIT_ID,
-  "reponame": YOUR_REPO_NAME     
+   "repourl": YOUR_REPOSITORY_URL,
+   "commitid": LONG_COMMIT_ID,
+   "reponame": YOUR_REPO_NAME     
 }
 ```
 
@@ -168,9 +168,9 @@ as an example
 
 ```
  {
-	"repourl": "https://github.ibm.com/APPLEBYD/node-sample",
-	"commitid": "518974ca68df99b336be4dafb7edaa3d5e1adeb0",
-  "reponame": "node-sample"     
+   "repourl": "https://github.ibm.com/APPLEBYD/node-sample",
+   "commitid": "518974ca68df99b336be4dafb7edaa3d5e1adeb0",
+   "reponame": "node-sample"     
 }
 ```
 
