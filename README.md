@@ -137,3 +137,45 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
     3. Pipeline build will run through its init containers followed by pipeline deploy
     4. Once the pipelines have run through successfully, your running application
  
+ 
+ ## Using the pipeline
+
+ - After performing the `kubectl apply -f github_source_templates/git_repo.yml` you should find a webhook on your project in github.ibm.com (note - currently limited to using github.ibm.com if using this code base and instructions)
+
+ - The application of the above yaml, will also have created a ksvc which is poked by the webhook when code changes are made
+
+ - Delivering a code change to your repository will cause the webhook to poke the ksvc which starts a pod which in turn pokes the ksvc for the event handler (created when you performed the `kubectl apply -f event_handler/github-event-handler.yml`)
+
+ - The pod for the event handler spins up and creates a knative pipelinerun and knative resource(s), these trigger the pipeline code and the the first pipeline pod spins up that is responsible for building your container and pushing to host.docker.internal:5000/knative/{{.NAME}}:{{.SHORTID}}, where NAME is you repo name and the SHORTID is the short commit id
+
+ - Once completed, a second pod spins up which handles deploying your application as per your yaml in your apps config directory.
+
+ ## Manual Trigger Of Build
+
+ - There is an endpoint on the event handler service that can be used to trigger a build manually via something like postman - you need to perform a `kubectl get ksvc` and find the DOMAIN (endpoint address) setting of the github-event-pipeline.
+
+ - Using something like postman - POST to <KSVC_DOMAIN>/manual with Header of Content-Type: application/json and a body of:
+
+ ```
+ {
+	"repourl": YOUR_REPOSITORY_URL,
+	"commitid": LONG_COMMIT_ID,
+  "reponame": YOUR_REPO_NAME     
+}
+```
+
+as an example
+
+```
+ {
+	"repourl": "https://github.ibm.com/APPLEBYD/node-sample",
+	"commitid": "518974ca68df99b336be4dafb7edaa3d5e1adeb0",
+  "reponame": "node-sample"     
+}
+```
+
+ ## Current restrictions
+
+ - You must have a file called deployment.yaml which contains your app deployment as the code is currently hard coded to replace the image listed in this file with that output in the build.
+
+ - Only run a single build at a time (artifacts are not fully uniquely named and problems could occur)
