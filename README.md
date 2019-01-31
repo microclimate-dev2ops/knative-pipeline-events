@@ -11,9 +11,9 @@
 - Set up a local docker registry  and optionally a registry viewer
 
   ```
-  docker run -d -p 5000:5000 --name registry-srv -e REGISTRY_STORAGE_DELETE_ENABLED=true registry:2
+  docker run -d --rm -p 5000:5000 --name registry-srv -e REGISTRY_STORAGE_DELETE_ENABLED=true registry:2
 
-  docker run -it -p 8080:8080 --name registry-web --link registry-srv -e REGISTRY_URL=http://registry-srv:5000/v2 -e REGISTRY_NAME=localhost:5000 hyper/docker-registry-web
+  docker run -d --rm -p 8080:8080 --name registry-web --link registry-srv -e REGISTRY_URL=http://registry-srv:5000/v2 -e REGISTRY_NAME=localhost:5000 hyper/docker-registry-web
   ```
 
 ## Install Knative and Istio
@@ -58,7 +58,7 @@ IMPORTANT:
 `kubectl edit cm config-domain --namespace knative-serving`
 
   - Use YOUR_IP.nip.io in place of example.com
-  - Run `ifconfig | grep "inet 9."` to get your ip address when using Docker for Mac
+  - Run `echo $(ifconfig | grep "inet 9." | cut -d ' ' -f2).nip.io` to get the address.
 
 ## Install Knative build-pipeline with patch
 
@@ -66,7 +66,10 @@ IMPORTANT:
 
 2. Clone the repository and export docker repo for `ko`
 
-`git clone https://github.com/dibbles/build-pipeline.git` into `$GOPATH/src/github.com/knative`
+```
+cd $GOPATH/src/github.com/knative
+git clone https://github.com/dibbles/build-pipeline.git
+```
   
 `export KO_DOCKER_REPO=localhost:5000/knative`
 
@@ -82,7 +85,10 @@ IMPORTANT:
 
 1. Clone the repository
 
-`git clone https://github.com/dibbles/eventing-sources.git` into `$GOPATH/src/github.com/knative`
+```
+cd $GOPATH/src/github.com/knative
+git clone https://github.com/dibbles/eventing-sources.git
+```
 
 `cd eventing-sources`
 
@@ -98,7 +104,10 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 
 1. Clone the repository 
 
-`git clone https://github.ibm.com/swiss-cloud/sound-of-devops.git` into `$GOPATH/src/github.ibm.com/swiss-cloud`
+```
+cd $GOPATH/src/github.ibm.com/swiss-cloud
+git clone https://github.ibm.com/swiss-cloud/sound-of-devops.git
+```
 
 `cd sound-of-devops`
 
@@ -125,6 +134,16 @@ Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the na
 ## Verify
 
 1. Check that a webhook was successfully created for your `sample` repository
+
+If you have an auth-token you can use this to 
+```
+curl -i -H "Authorization: token YOUR_GITHUB_TOKEN" https://api.github.ibm.com/repos/GITHUB_OWNER/GITHUB_REPO_NAME/hooks
+```
+
+Check if there are hooks present, ensure the IP address hooked matches the IP address for your cluster.  
+
+`ifconfig | grep "inet 9." | cut -d ' ' -f2`
+
 
 2. Commit a code change to your repository
 
