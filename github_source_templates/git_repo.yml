@@ -35,12 +35,12 @@ stringData:
 apiVersion: sources.eventing.knative.dev/v1alpha1
 kind: GitHubSource
 metadata:
-  name: github-event-source-sample
+  name: github-event-source-GITHUB_REPO_NAME
 spec:
   eventTypes:
     - push
     - pull_request
-  ownerAndRepository: Jessica-McCreery/sample
+  ownerAndRepository: GITHUB_OWNER/GITHUB_REPO_NAME
   accessToken:
     secretKeyRef:
       name: github-secret
