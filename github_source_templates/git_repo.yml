@@ -7,7 +7,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: does_not_matter
-  password: YOUR_GITHUB_ACCESS_TOKEN
+  password: a58c94294d7d015d69d33d446d6dfa1a90ea7964
 
 ---
 
@@ -27,19 +27,20 @@ metadata:
   name: github-secret
 type: Opaque
 stringData:
-  accessToken: YOUR_GITHUB_ACCESS_TOKEN
-  secretToken: SOME_RANDOM_STRING_HERE
+  accessToken: a58c94294d7d015d69d33d446d6dfa1a90ea7964
+  secretToken: abfea
 
 ---
 
 apiVersion: sources.eventing.knative.dev/v1alpha1
 kind: GitHubSource
 metadata:
-  name: github-event-source-GITHUB_REPO_NAME
+  name: github-event-source-sample
 spec:
   eventTypes:
     - push
-  ownerAndRepository: GITHUB_OWNER/GITHUB_REPO_NAME
+    - pull_request
+  ownerAndRepository: Jessica-McCreery/sample
   accessToken:
     secretKeyRef:
       name: github-secret
