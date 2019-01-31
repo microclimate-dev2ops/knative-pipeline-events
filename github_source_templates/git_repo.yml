@@ -7,7 +7,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: does_not_matter
-  password: a58c94294d7d015d69d33d446d6dfa1a90ea7964
+  password: YOUR_GITHUB_ACCESS_TOKEN
 
 ---
 
@@ -27,8 +27,8 @@ metadata:
   name: github-secret
 type: Opaque
 stringData:
-  accessToken: a58c94294d7d015d69d33d446d6dfa1a90ea7964
-  secretToken: abfea
+  accessToken: YOUR_GITHUB_ACCESS_TOKEN
+  secretToken: SOME_RANDOM_STRING_HERE
 
 ---
 
