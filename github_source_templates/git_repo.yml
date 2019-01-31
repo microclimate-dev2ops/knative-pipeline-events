@@ -39,6 +39,7 @@ metadata:
 spec:
   eventTypes:
     - push
+    - pull_request
   ownerAndRepository: GITHUB_OWNER/GITHUB_REPO_NAME
   accessToken:
     secretKeyRef:

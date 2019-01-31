@@ -76,27 +76,63 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 
 func handleWebhook(w http.ResponseWriter, r *http.Request) {
 
-	webhookData := gh.PushPayload{}
-	err := json.NewDecoder(r.Body).Decode(&webhookData)
-	if err != nil {
-		log.Println("OH CACK - WRONG EVENT TYPE???")
-		return
-	}
+	gitHubEventType := r.Header["Ce-X-Ce-X-Github-Event"]
 
-	dateTime := time.Now().Unix()
+	gitHubEventTypeString := strings.Replace(gitHubEventType[0], "\"", "", -1)
 
-	log.Println("============================")
-	log.Println(webhookData.HeadCommit.ID)
-	log.Println(webhookData.Repository.URL)
-	log.Println(webhookData.Repository.Name)
-	log.Println("============================")
+	log.Println(gitHubEventTypeString)
 
-	argmap := map[string]interface{}{
-		"URL":     webhookData.Repository.URL,
-		"SHORTID": webhookData.HeadCommit.ID[0:7],
-		"ID":      webhookData.HeadCommit.ID,
-		"NAME":    webhookData.Repository.Name,
-		"MARKER":  dateTime,
+	var argmap map[string]interface{}
+
+	if gitHubEventTypeString == "push" {
+
+		webhookData := gh.PushPayload{}
+		err := json.NewDecoder(r.Body).Decode(&webhookData)
+		if err != nil {
+			log.Println("Something went wrong, webhook data was not decoded correctly")
+			return
+		}
+
+		dateTime := time.Now().Unix()
+
+		log.Println("============================")
+		log.Println(webhookData.HeadCommit.ID)
+		log.Println(webhookData.Repository.URL)
+		log.Println(webhookData.Repository.Name)
+		log.Println("============================")
+
+		argmap = map[string]interface{}{
+			"URL":     webhookData.Repository.URL,
+			"SHORTID": webhookData.HeadCommit.ID[0:7],
+			"ID":      webhookData.HeadCommit.ID,
+			"NAME":    webhookData.Repository.Name,
+			"MARKER":  dateTime,
+		}
+
+	} else if gitHubEventTypeString == "pull_request" {
+
+		webhookData := gh.PullRequestPayload{}
+		err := json.NewDecoder(r.Body).Decode(&webhookData)
+		if err != nil {
+			log.Println("Something went wrong, webhook data was not decoded correctly")
+			return
+		}
+
+		dateTime := time.Now().Unix()
+
+		log.Println("============================")
+		log.Println(webhookData.PullRequest.Head.Sha)
+		log.Println(webhookData.Repository.HTMLURL)
+		log.Println(webhookData.Repository.Name)
+		log.Println("============================")
+
+		argmap = map[string]interface{}{
+			"URL":     webhookData.Repository.HTMLURL,
+			"SHORTID": webhookData.PullRequest.Head.Sha[0:7],
+			"ID":      webhookData.PullRequest.Head.Sha,
+			"NAME":    webhookData.Repository.Name,
+			"MARKER":  dateTime,
+		}
 	}
 
 	submitBuild(argmap)
