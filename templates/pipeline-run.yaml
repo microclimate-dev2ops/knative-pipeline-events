@@ -12,10 +12,7 @@ spec:
   resources:
   - name: source-repo
     resourceRef:
-      name: simple-git-source
+      name: simple-git-source-{{.SHORTID}}
   - name: image-name
     resourceRef:
-      name: simple-image-resource
-  
-
-    
+      name: simple-image-resource-{{.SHORTID}}

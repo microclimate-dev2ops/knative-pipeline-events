@@ -1,7 +1,7 @@
 apiVersion: pipeline.knative.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: simple-git-source
+  name: simple-git-source-{{.SHORTID}}
 spec:
   type: git
   params:
@@ -15,8 +15,8 @@ spec:
 apiVersion: pipeline.knative.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: simple-image-resource
-spec:        
+  name: simple-image-resource-{{.SHORTID}}
+spec:
   type: image
   params:
   - name: url
