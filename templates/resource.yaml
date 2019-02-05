@@ -11,7 +11,6 @@ spec:
     value: {{.URL}}
 
 ---
-
 apiVersion: pipeline.knative.dev/v1alpha1
 kind: PipelineResource
 metadata:
@@ -20,6 +19,13 @@ spec:
   type: image
   params:
   - name: url
-    #value: docker.io/dibbles/{{.NAME}}
-    #value: host.docker.internal:5000/knative/{{.NAME}}
+    # In the examples below {{.NAME}} will be replaced for you but the username must be set yourself.
+
+    # To use the public Docker registry:
+    # value: docker.io/<Your username>/{{.NAME}}
+  
+    # To use `latest` as the tag:
+    # value: host.docker.internal:5000/knative/{{.NAME}}
+
+    # To use the commit ID as the tag:
     value: host.docker.internal:5000/knative/{{.NAME}}:{{.SHORTID}}
