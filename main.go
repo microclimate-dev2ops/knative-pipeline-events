@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -167,9 +168,18 @@ func modifyYaml(gitAttrs map[string]interface{}, templateToChange, templateOutpu
 }
 
 func submitBuild(varmap map[string]interface{}) {
-	configString, err := modifyYaml(varmap, "templates/resource.yaml", "edited-resource.yaml")
+	resourceFileLocation := "templates/resource.yaml"
+	pipelineRunFileLocation := "templates/pipeline-run.yaml"
+
+	editedResourceFileOutputName := "edited-resource.yaml"
+	editedResourceFileOutputFullPath := fmt.Sprintf("/tmp/%s", editedResourceFileOutputName)
+
+	editedPipelineFileOutputName := "edited-pipeline-run.yaml"
+	editedPipelineFileOutputFullPath := fmt.Sprintf("/tmp/%s", editedPipelineFileOutputName)
+
+	configString, err := modifyYaml(varmap, resourceFileLocation, editedResourceFileOutputName)
 	if err != nil {
-		log.Printf("An error occurred modifying templates/resource.yaml: %s", err)
+		log.Printf("An error occurred modifying %s: %s", resourceFileLocation, err)
 		return
 	}
 
@@ -178,9 +188,9 @@ func submitBuild(varmap map[string]interface{}) {
 	log.Println(configString)
 	log.Println("============================")
 
-	configString, err = modifyYaml(varmap, "templates/pipeline-run.yaml", "edited-pipeline-run.yaml")
+	configString, err = modifyYaml(varmap, pipelineRunFileLocation, editedPipelineFileOutputName)
 	if err != nil {
-		log.Printf("An error occurred modifying templates/pipeline-run.yaml: %s", err)
+		log.Printf("An error occurred modifying %s: %s", pipelineRunFileLocation, err)
 		return
 	}
 
@@ -189,21 +199,21 @@ func submitBuild(varmap map[string]interface{}) {
 	log.Println(configString)
 	log.Println("============================")
 
-	output, err := applyYaml("/tmp/edited-resource.yaml")
+	output, err := applyYaml(editedResourceFileOutputFullPath)
 	if output != nil {
-		log.Printf("Applied /tmp/edited-resource.yaml: %s", output)
+		log.Printf("Applied %s: %s", editedResourceFileOutputFullPath, output)
 	}
 	if err != nil {
-		log.Printf("An error occurred applying the yaml at \n /tmp/edited-resource.yaml")
+		log.Printf("An error occurred applying the yaml at \n %s", editedResourceFileOutputFullPath)
 		return
 	}
 
-	output, err = applyYaml("/tmp/edited-pipeline-run.yaml")
+	output, err = applyYaml(editedPipelineFileOutputFullPath)
 	if output != nil {
-		log.Printf("Applied /tmp/edited-pipeline-run.yaml: \n %s", output)
+		log.Printf("Applied %s: \n %s", editedPipelineFileOutputFullPath, output)
 	}
 	if err != nil {
-		log.Printf("An error occurred applying the yaml at /tmp/edited-pipeline-run.yaml")
+		log.Printf("An error occurred applying the yaml at %s", editedPipelineFileOutputFullPath)
 		return
 	}
 }
