@@ -28,4 +28,10 @@ spec:
         resource: source-repo
       - name: image-out
         resource: image-name
-
+  - name: print-endpoint
+    taskRef:
+      name: print-endpoint-task
+    resources:
+      inputs: 
+      - name: git-source
+        resource: source-repo
