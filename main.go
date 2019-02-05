@@ -4,19 +4,28 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	gh "gopkg.in/go-playground/webhooks.v3/github"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"text/template"
 	"time"
-
-	gh "gopkg.in/go-playground/webhooks.v3/github"
 )
 
-// Manual subsmission data struct
+//BuildInformation - good stuff
+type BuildInformation struct {
+	URL     string
+	SHORTID string
+	ID      string
+	NAME    string
+	MARKER  string
+}
+
+//BuildRequest - a manual submission data struct
 type BuildRequest struct {
 	/* Example payload
 	{
@@ -32,8 +41,6 @@ type BuildRequest struct {
 }
 
 func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
-	// fmt.Printf("headers: %v\n", r.Header)
-	// TODO: check the CE-X-CE TYPE header to know what type of GitHub payload it will be
 	requestData := BuildRequest{}
 	err := json.NewDecoder(r.Body).Decode(&requestData)
 	if err != nil {
@@ -42,7 +49,7 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dateTime := time.Now().Unix()
+	timestamp := getDateTimeAsString()
 
 	log.Println("Printing request information...")
 	log.Println("============================")
@@ -50,7 +57,7 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 	log.Println(requestData.COMMITID)
 	log.Println(requestData.REPONAME)
 	log.Println(requestData.BRANCH)
-	log.Println(dateTime)
+	log.Println(timestamp)
 	log.Println("============================")
 
 	id := ""
@@ -68,7 +75,7 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 		"SHORTID": shortid,
 		"ID":      id,
 		"NAME":    requestData.REPONAME,
-		"MARKER":  dateTime,
+		"MARKER":  timestamp,
 	}
 	submitBuild(argmap)
 }
@@ -78,7 +85,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	gitHubEventTypeString := strings.Replace(gitHubEventType[0], "\"", "", -1)
 	log.Printf("GitHub event type is %s", gitHubEventTypeString)
 
-	var argmap map[string]interface{}
+	buildInformation := BuildInformation{}
 
 	if gitHubEventTypeString == "push" {
 		webhookData := gh.PushPayload{}
@@ -87,8 +94,9 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 			log.Printf("An error occurred decoding webhook data: %s", err)
 			return
 		}
+		// TODO have timestamp be automatically created when we create the struct (e.g. a constructor method?)
+		timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
-		dateTime := time.Now().Unix()
 		log.Println("Printing webhook information for a push event...")
 		log.Println("============================")
 		log.Println(webhookData.HeadCommit.ID)
@@ -96,13 +104,11 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		log.Println(webhookData.Repository.Name)
 		log.Println("============================")
 
-		argmap = map[string]interface{}{
-			"URL":     webhookData.Repository.URL,
-			"SHORTID": webhookData.HeadCommit.ID[0:7],
-			"ID":      webhookData.HeadCommit.ID,
-			"NAME":    webhookData.Repository.Name,
-			"MARKER":  dateTime,
-		}
+		buildInformation.URL = webhookData.Repository.URL
+		buildInformation.SHORTID = webhookData.HeadCommit.ID[0:7]
+		buildInformation.ID = webhookData.HeadCommit.ID
+		buildInformation.NAME = webhookData.Repository.Name
+		buildInformation.MARKER = timestamp
 
 	} else if gitHubEventTypeString == "pull_request" {
 
@@ -113,24 +119,20 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		dateTime := time.Now().Unix()
-
-		log.Println("Printing webhook information for a pull request...")
-		log.Println("============================")
-		log.Println(webhookData.PullRequest.Head.Sha)
-		log.Println(webhookData.Repository.HTMLURL)
-		log.Println(webhookData.Repository.Name)
-		log.Println("============================")
-
-		argmap = map[string]interface{}{
-			"URL":     webhookData.Repository.HTMLURL,
-			"SHORTID": webhookData.PullRequest.Head.Sha[0:7],
-			"ID":      webhookData.PullRequest.Head.Sha,
-			"NAME":    webhookData.Repository.Name,
-			"MARKER":  dateTime,
-		}
+		buildInformation.URL = webhookData.Repository.HTMLURL
+		buildInformation.SHORTID = webhookData.PullRequest.Head.Sha[0:7]
+		buildInformation.ID = webhookData.PullRequest.Head.Sha
+		buildInformation.NAME = webhookData.Repository.Name
+		buildInformation.MARKER = getDateTimeAsString()
 	}
-	submitBuild(argmap)
+
+	fmt.Printf("Build information: \n %s", buildInformation)
+
+	submitBuild2(buildInformation)
+}
+
+func getDateTimeAsString() string {
+	return strconv.FormatInt(time.Now().Unix(), 10)
 }
 
 func modifyYaml(gitAttrs map[string]interface{}, templateToChange, templateOutputFile string) (string, error) {
@@ -165,6 +167,10 @@ func modifyYaml(gitAttrs map[string]interface{}, templateToChange, templateOutpu
 		log.Printf("Error writing file to %s", location)
 	}
 	return string(data[:]), nil
+}
+
+func submitBuild2(buildInformation BuildInformation) {
+
 }
 
 func submitBuild(varmap map[string]interface{}) {
