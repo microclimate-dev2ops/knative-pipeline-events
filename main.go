@@ -201,7 +201,7 @@ func submitBuild(varmap map[string]interface{}) {
 
 	output, err := applyYaml(editedResourceFileOutputFullPath)
 	if output != nil {
-		log.Printf("Applied %s: %s", editedResourceFileOutputFullPath, output)
+		log.Printf("Applied %s: \n %s", editedResourceFileOutputFullPath, output)
 	}
 	if err != nil {
 		log.Printf("An error occurred applying the yaml at %s", editedResourceFileOutputFullPath)
