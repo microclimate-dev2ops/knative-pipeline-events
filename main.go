@@ -33,7 +33,7 @@ type BuildRequest struct {
 
 func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 	// fmt.Printf("headers: %v\n", r.Header)
-	// TODO: check the CE-X-CE TYPE header to know what type of GitHub Payload it will be
+	// TODO: check the CE-X-CE TYPE header to know what type of GitHub payload it will be
 	requestData := BuildRequest{}
 	err := json.NewDecoder(r.Body).Decode(&requestData)
 	if err != nil {
@@ -204,7 +204,7 @@ func submitBuild(varmap map[string]interface{}) {
 		log.Printf("Applied %s: %s", editedResourceFileOutputFullPath, output)
 	}
 	if err != nil {
-		log.Printf("An error occurred applying the yaml at \n %s", editedResourceFileOutputFullPath)
+		log.Printf("An error occurred applying the yaml at %s", editedResourceFileOutputFullPath)
 		return
 	}
 
