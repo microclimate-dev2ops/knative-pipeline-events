@@ -37,18 +37,14 @@ If you see an error when creating resources about an unknown type, run the `kube
 
 ```
 kubectl apply --filename https://github.com/knative/serving/releases/download/v0.3.0/serving.yaml \
---filename https://github.com/knative/build/releases/download/v0.3.0/release.yaml \
---filename https://github.com/knative/eventing/releases/download/v0.3.0/release.yaml \
---filename https://github.com/knative/eventing-sources/releases/download/v0.3.0/release.yaml
+--filename https://github.com/knative/eventing/releases/download/v0.3.0/release.yaml
 ```
 
 To check the status of the Knative install components run
 
 ```
 kubectl get pods --namespace knative-serving
-kubectl get pods --namespace knative-build
 kubectl get pods --namespace knative-eventing
-kubectl get pods --namespace knative-sources
 ```
 
 ## Custom domain setup
