@@ -128,7 +128,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("Build information: \n %s", buildInformation)
 
-	submitBuild2(buildInformation)
+	submitBuild(buildInformation)
 }
 
 func getDateTimeAsString() string {
@@ -167,10 +167,6 @@ func modifyYaml(gitAttrs map[string]interface{}, templateToChange, templateOutpu
 		log.Printf("Error writing file to %s", location)
 	}
 	return string(data[:]), nil
-}
-
-func submitBuild2(buildInformation BuildInformation) {
-
 }
 
 func submitBuild(varmap map[string]interface{}) {
