@@ -70,14 +70,13 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 		shortid = "latest"
 	}
 
-	argmap := map[string]interface{}{
-		"URL":     requestData.REPOURL,
-		"SHORTID": shortid,
-		"ID":      id,
-		"NAME":    requestData.REPONAME,
-		"MARKER":  timestamp,
-	}
-	submitBuild(argmap)
+	buildInformation := BuildInformation{}
+	buildInformation.URL = requestData.REPOURL
+	buildInformation.SHORTID = shortid
+	buildInformation.ID = id
+	buildInformation.NAME = requestData.REPONAME
+	buildInformation.MARKER = timestamp
+	submitBuild(buildInformation)
 }
 
 func handleWebhook(w http.ResponseWriter, r *http.Request) {
@@ -127,7 +126,7 @@ func getDateTimeAsString() string {
 	return strconv.FormatInt(time.Now().Unix(), 10)
 }
 
-func modifyYaml(gitAttrs map[string]interface{}, templateToChange, templateOutputFile string) (string, error) {
+func modifyYaml(gitAttrs BuildInformation, templateToChange, templateOutputFile string) (string, error) {
 	templateFile, err := filepath.Abs(templateToChange)
 	if err != nil {
 		log.Printf("An error occurred getting the path of the template file to change: %s", err)
@@ -161,7 +160,7 @@ func modifyYaml(gitAttrs map[string]interface{}, templateToChange, templateOutpu
 	return string(data[:]), nil
 }
 
-func submitBuild(varmap map[string]interface{}) {
+func submitBuild(buildInformation BuildInformation) {
 	resourceFileLocation := "templates/resource.yaml"
 	pipelineRunFileLocation := "templates/pipeline-run.yaml"
 
@@ -171,7 +170,7 @@ func submitBuild(varmap map[string]interface{}) {
 	editedPipelineFileOutputName := "edited-pipeline-run.yaml"
 	editedPipelineFileOutputFullPath := fmt.Sprintf("/tmp/%s", editedPipelineFileOutputName)
 
-	configString, err := modifyYaml(varmap, resourceFileLocation, editedResourceFileOutputName)
+	configString, err := modifyYaml(buildInformation, resourceFileLocation, editedResourceFileOutputName)
 	if err != nil {
 		log.Printf("An error occurred modifying %s: %s", resourceFileLocation, err)
 		return
@@ -182,7 +181,7 @@ func submitBuild(varmap map[string]interface{}) {
 	log.Println(configString)
 	log.Println("============================")
 
-	configString, err = modifyYaml(varmap, pipelineRunFileLocation, editedPipelineFileOutputName)
+	configString, err = modifyYaml(buildInformation, pipelineRunFileLocation, editedPipelineFileOutputName)
 	if err != nil {
 		log.Printf("An error occurred modifying %s: %s", pipelineRunFileLocation, err)
 		return
