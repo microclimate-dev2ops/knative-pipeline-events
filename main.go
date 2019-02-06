@@ -96,14 +96,6 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		}
 		// TODO have timestamp be automatically created when we create the struct (e.g. a constructor method?)
 		timestamp := strconv.FormatInt(time.Now().Unix(), 10)
-
-		log.Println("Printing webhook information for a push event...")
-		log.Println("============================")
-		log.Println(webhookData.HeadCommit.ID)
-		log.Println(webhookData.Repository.URL)
-		log.Println(webhookData.Repository.Name)
-		log.Println("============================")
-
 		buildInformation.URL = webhookData.Repository.URL
 		buildInformation.SHORTID = webhookData.HeadCommit.ID[0:7]
 		buildInformation.ID = webhookData.HeadCommit.ID
