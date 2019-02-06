@@ -87,6 +87,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	buildInformation := BuildInformation{}
 
 	if gitHubEventTypeString == "push" {
+		log.Println("Handling push event")
 		webhookData := gh.PushPayload{}
 		err := json.NewDecoder(r.Body).Decode(&webhookData)
 		if err != nil {
@@ -102,7 +103,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		buildInformation.MARKER = timestamp
 
 	} else if gitHubEventTypeString == "pull_request" {
-
+		log.Println("Handling pull request event")
 		webhookData := gh.PullRequestPayload{}
 		err := json.NewDecoder(r.Body).Decode(&webhookData)
 		if err != nil {
@@ -117,7 +118,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		buildInformation.MARKER = getDateTimeAsString()
 	}
 
-	fmt.Printf("Build information: \n %s", buildInformation)
+	log.Printf("Build information: \n %s", buildInformation)
 
 	submitBuild(buildInformation)
 }
