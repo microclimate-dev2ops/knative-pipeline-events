@@ -49,17 +49,6 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	timestamp := getDateTimeAsString()
-
-	log.Println("Printing request information...")
-	log.Println("============================")
-	log.Println(requestData.REPOURL)
-	log.Println(requestData.COMMITID)
-	log.Println(requestData.REPONAME)
-	log.Println(requestData.BRANCH)
-	log.Println(timestamp)
-	log.Println("============================")
-
 	id := ""
 	shortid := ""
 	if requestData.COMMITID != "" {
@@ -70,12 +59,16 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 		shortid = "latest"
 	}
 
+	timestamp := getDateTimeAsString()
 	buildInformation := BuildInformation{}
 	buildInformation.URL = requestData.REPOURL
 	buildInformation.SHORTID = shortid
 	buildInformation.ID = id
 	buildInformation.NAME = requestData.REPONAME
 	buildInformation.MARKER = timestamp
+
+	log.Println("Handling manual build request")
+	log.Printf("Build information: \n %s", buildInformation)
 	submitBuild(buildInformation)
 }
 
@@ -117,9 +110,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		buildInformation.NAME = webhookData.Repository.Name
 		buildInformation.MARKER = getDateTimeAsString()
 	}
-
 	log.Printf("Build information: \n %s", buildInformation)
-
 	submitBuild(buildInformation)
 }
 
