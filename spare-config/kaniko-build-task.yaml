@@ -27,4 +27,4 @@ spec:
     - --dockerfile=${inputs.params.pathToDockerFile}
     - --destination=${outputs.resources.builtImage.url}
     - --context=${inputs.params.pathToContext}
-    - --insecure
+    - --insecure # Remove depending on where you'd like to push
