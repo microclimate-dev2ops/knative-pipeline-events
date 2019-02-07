@@ -6,9 +6,9 @@ spec:
   type: git
   params:
   - name: revision
-    value: {{.ID}}
+    value: {{.COMMITID}}
   - name: url
-    value: {{.URL}}
+    value: {{.REPOURL}}
 
 ---
 apiVersion: pipeline.knative.dev/v1alpha1
@@ -19,13 +19,13 @@ spec:
   type: image
   params:
   - name: url
-    # In the examples below {{.NAME}} will be replaced for you but the username must be set yourself.
+    # In the examples below {{.REPONAME}} will be replaced for you but the username must be set yourself.
 
     # To use the public Docker registry:
-    # value: docker.io/<Your username>/{{.NAME}}
+    # value: docker.io/<Your username>/{{.REPONAME}}
   
     # To use `latest` as the tag:
-    # value: host.docker.internal:5000/knative/{{.NAME}}
+    # value: host.docker.internal:5000/knative/{{.REPONAME}}
 
-    # To use the commit ID as the tag:
-    value: host.docker.internal:5000/knative/{{.NAME}}:{{.SHORTID}}
+  # To use the commit ID as the tag:
+    value: host.docker.internal:5000/knative/{{.REPONAME}}:{{.SHORTID}}
