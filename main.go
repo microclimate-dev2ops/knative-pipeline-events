@@ -67,6 +67,9 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 	buildInformation.COMMITID = id
 	buildInformation.REPONAME = requestData.REPONAME
 	buildInformation.TIMESTAMP = timestamp
+
+	log.Println("Handling manual build request")
+	log.Printf("Build information: \n %s", buildInformation)
 	submitBuild(buildInformation)
 }
 
