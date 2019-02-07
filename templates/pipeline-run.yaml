@@ -4,7 +4,7 @@ kind: PipelineRun
 # SHORTID and MARKER are used to ensure we have uniquely named pipeline runs
 # These should not be modified directly: it will be done by the event handler.
 metadata:
-  name: pipeline-{{.SHORTID}}-{{.MARKER}}
+  name: pipeline-{{.SHORTID}}-{{.TIMESTAMP}}
 spec:
   pipelineRef:
     name: simple-pipeline

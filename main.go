@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	gh "gopkg.in/go-playground/webhooks.v3/github"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,24 +13,26 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	gh "gopkg.in/go-playground/webhooks.v3/github"
 )
 
-//BuildInformation - good stuff
+//BuildInformation - information required to build a particular commit from a Git repository.
 type BuildInformation struct {
-	URL     string
-	SHORTID string
-	ID      string
-	NAME    string
-	MARKER  string
+	REPOURL   string
+	SHORTID   string
+	COMMITID  string
+	REPONAME  string
+	TIMESTAMP string
 }
 
 //BuildRequest - a manual submission data struct
 type BuildRequest struct {
 	/* Example payload
 	{
-	  "repourl": "https://github.ibm.com/duanes-org/slim-devops-test-overrides-project",
-	  "commitid": "7d84981c66718ee2dda1af280f915cc2feb9d275",
-	  "reponame": "slim-devops-test-overrides-project"
+	  "repourl": "https://github.ibm.com/your-org/test-project",
+	  "commitid": "7d84981c66718ee2dda1af280f915cc2feb6ffow",
+	  "reponame": "test-project"
 	}
 	*/
 	REPOURL  string `json:"repourl"`
@@ -61,11 +62,11 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 
 	timestamp := getDateTimeAsString()
 	buildInformation := BuildInformation{}
-	buildInformation.URL = requestData.REPOURL
+	buildInformation.REPOURL = requestData.REPOURL
 	buildInformation.SHORTID = shortid
-	buildInformation.ID = id
-	buildInformation.NAME = requestData.REPONAME
-	buildInformation.MARKER = timestamp
+	buildInformation.COMMITID = id
+	buildInformation.REPONAME = requestData.REPONAME
+	buildInformation.TIMESTAMP = timestamp
 
 	log.Println("Handling manual build request")
 	log.Printf("Build information: \n %s", buildInformation)
@@ -73,30 +74,31 @@ func handleManualBuildRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleWebhook(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.Header)
 	gitHubEventType := r.Header["Ce-X-Ce-X-Github-Event"]
 	gitHubEventTypeString := strings.Replace(gitHubEventType[0], "\"", "", -1)
 	log.Printf("GitHub event type is %s", gitHubEventTypeString)
 
 	buildInformation := BuildInformation{}
+	timestamp := getDateTimeAsString()
 
 	if gitHubEventTypeString == "push" {
-		log.Println("Handling push event")
+		log.Println("Handling push event...")
 		webhookData := gh.PushPayload{}
 		err := json.NewDecoder(r.Body).Decode(&webhookData)
 		if err != nil {
 			log.Printf("An error occurred decoding webhook data: %s", err)
 			return
 		}
-		// TODO have timestamp be automatically created when we create the struct (e.g. a constructor method?)
-		timestamp := strconv.FormatInt(time.Now().Unix(), 10)
-		buildInformation.URL = webhookData.Repository.URL
+
+		buildInformation.REPOURL = webhookData.Repository.URL
 		buildInformation.SHORTID = webhookData.HeadCommit.ID[0:7]
-		buildInformation.ID = webhookData.HeadCommit.ID
-		buildInformation.NAME = webhookData.Repository.Name
-		buildInformation.MARKER = timestamp
+		buildInformation.COMMITID = webhookData.HeadCommit.ID
+		buildInformation.REPONAME = webhookData.Repository.Name
+		buildInformation.TIMESTAMP = timestamp
 
 	} else if gitHubEventTypeString == "pull_request" {
-		log.Println("Handling pull request event")
+		log.Println("Handling pull request event...")
 		webhookData := gh.PullRequestPayload{}
 		err := json.NewDecoder(r.Body).Decode(&webhookData)
 		if err != nil {
@@ -104,17 +106,20 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		buildInformation.URL = webhookData.Repository.HTMLURL
+		buildInformation.REPOURL = webhookData.Repository.HTMLURL
 		buildInformation.SHORTID = webhookData.PullRequest.Head.Sha[0:7]
-		buildInformation.ID = webhookData.PullRequest.Head.Sha
-		buildInformation.NAME = webhookData.Repository.Name
-		buildInformation.MARKER = getDateTimeAsString()
+		buildInformation.COMMITID = webhookData.PullRequest.Head.Sha
+		buildInformation.REPONAME = webhookData.Repository.Name
+		buildInformation.TIMESTAMP = timestamp
 	}
-	log.Printf("Build information: \n %s", buildInformation)
+
+	log.Printf("Build information for repository %s:%s: \n %s", buildInformation.REPOURL, buildInformation.SHORTID, buildInformation)
+
 	submitBuild(buildInformation)
 }
 
 func getDateTimeAsString() string {
+	// TODO have timestamp be automatically created when we create the struct (e.g. a constructor method?)
 	return strconv.FormatInt(time.Now().Unix(), 10)
 }
 
