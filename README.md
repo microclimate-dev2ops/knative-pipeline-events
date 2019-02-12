@@ -1,4 +1,4 @@
-# sound-of-devops
+# knative-pipeline-events
 
 ## Prerequisites
 
@@ -96,7 +96,7 @@ git clone https://github.com/dibbles/eventing-sources.git
 
 Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the name 'sample'. 
 
-## Install sound-of-devops:
+## Install knative-pipeline-events:
 
 1. Clone the repository 
 
