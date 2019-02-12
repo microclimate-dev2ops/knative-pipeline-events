@@ -21,7 +21,7 @@ secrets:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: github-secret
+  name: github-webhook-secret
 type: Opaque
 stringData:
   accessToken: YOUR_GITHUB_ACCESS_TOKEN
@@ -39,11 +39,11 @@ spec:
   ownerAndRepository: GITHUB_OWNER/GITHUB_REPO_NAME
   accessToken:
     secretKeyRef:
-      name: github-secret
+      name: github-webhook-secret
       key: accessToken
   secretToken:
     secretKeyRef:
-      name: github-secret
+      name: github-webhook-secret
       key: secretToken
   sink:
     apiVersion: serving.knative.dev/v1alpha1
