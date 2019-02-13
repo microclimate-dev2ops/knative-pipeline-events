@@ -98,11 +98,11 @@ git clone https://github.com/dibbles/eventing-sources.git
 1. Clone the repository 
 
 ```
-cd $GOPATH/src/github.ibm.com/swiss-cloud
-git clone https://github.ibm.com/swiss-cloud/sound-of-devops.git
+cd $GOPATH/src/github.com/microclimate-dev2ops
+git clone https://github.com/microclimate-dev2ops/knative-pipeline-events.git
 ```
 
-`cd sound-of-devops`
+`cd knative-pipeline-events`
 
 2. Install the components
 
@@ -154,7 +154,7 @@ Check if there are hooks present, ensure the IP address hooked matches the IP ad
 
  - After performing the `kubectl apply -f github_source_templates/git_repo.yml` you should find a webhook on your project in github.ibm.com (note - currently limited to using github.ibm.com if using this code base and instructions)
 
- - The application of the above yaml, will also have created a ksvc which is poked by the webhook when code changes are made
+ - The application of the above yaml will also have created a ksvc which is poked by the webhook when code changes are made
 
  - Delivering a code change to your repository will cause the webhook to poke the ksvc which starts a pod which in turn pokes the ksvc for the event handler (created when you performed the `kubectl apply -f event_handler/github-event-handler.yml`)
 
