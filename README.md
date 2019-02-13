@@ -15,6 +15,7 @@
 
   docker run -d --rm -p 8080:8080 --name registry-web --link registry-srv -e REGISTRY_URL=http://registry-srv:5000/v2 -e REGISTRY_NAME=localhost:5000 hyper/docker-registry-web
   ```
+- A project you would like to build and deploy, it must have a Dockerfile 
 
 ## Install Knative and Istio
 
@@ -92,10 +93,6 @@ git clone https://github.com/dibbles/eventing-sources.git
 
 `ko apply -f config/default.yaml`
 
-## Fork the sample app 
-
-Fork `github.ibm.com/swiss-cloud/sample` app in GHE to your own org. Keep the name 'sample'. 
-
 ## Install knative-pipeline-events:
 
 1. Clone the repository 
@@ -129,7 +126,7 @@ git clone https://github.ibm.com/swiss-cloud/sound-of-devops.git
 
 ## Verify
 
-1. Check that a webhook was successfully created for your `sample` repository
+1. Check that a webhook was successfully created for your repository
 
 If you have an auth-token you can use this to 
 ```
