@@ -78,21 +78,6 @@ git clone https://github.com/dibbles/build-pipeline.git
 
 4. Check pods in `knative-build-pipeline` for status of install
 
-## Eventing-sources patch 
-
-1. Clone the repository
-
-```
-cd $GOPATH/src/github.com/knative
-git clone https://github.com/dibbles/eventing-sources.git
-```
-
-`cd eventing-sources`
-
-2. Apply the changes:
-
-`ko apply -f config/default.yaml`
-
 ## Install knative-pipeline-events:
 
 1. Clone the repository 
