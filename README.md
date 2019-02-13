@@ -15,7 +15,7 @@
 
   docker run -d --rm -p 8080:8080 --name registry-web --link registry-srv -e REGISTRY_URL=http://registry-srv:5000/v2 -e REGISTRY_NAME=localhost:5000 hyper/docker-registry-web
   ```
-- A project you would like to build and deploy, it must have a Dockerfile 
+- A project in GitHub that you would like to build and deploy, it must have a Dockerfile and Deployment yaml 
 
 ## Install Knative and Istio
 
